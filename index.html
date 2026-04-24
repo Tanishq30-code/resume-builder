@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Hostel Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-building-user"></i>
+                <span>Lumina</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</li>
+                <li data-target="students"><i class="fa-solid fa-users"></i> Students</li>
+                <li data-target="rooms"><i class="fa-solid fa-door-open"></i> Rooms</li>
+                <li data-target="fees"><i class="fa-solid fa-file-invoice-dollar"></i> Fees</li>
+                <li data-target="maintenance"><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <h2>Dashboard</h2>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin Profile">
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <div class="views">
+                <!-- Dashboard View -->
+                <div id="dashboard" class="view active-view">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-user-check"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Students</h3>
+                                <p id="total-students">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-door-closed"></i></div>
+                            <div class="stat-info">
+                                <h3>Rooms Occupied</h3>
+                                <p id="rooms-occupied">0 / 0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>Pending Fees</h3>
+                                <p id="pending-fees">$0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="stat-info">
+                                <h3>Open Issues</h3>
+                                <p id="open-issues">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students View -->
+                <div id="students" class="view">
+                    <div class="view-header">
+                        <h3>Student Directory</h3>
+                        <button class="btn primary-btn" id="btn-add-student"><i class="fa-solid fa-plus"></i> Add Student</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Room</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rooms View -->
+                <div id="rooms" class="view">
+                    <div class="view-header">
+                        <h3>Room Allocation</h3>
+                        <button class="btn primary-btn" id="btn-add-room"><i class="fa-solid fa-plus"></i> Add Room</button>
+                    </div>
+                    <div class="rooms-grid" id="rooms-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Fees View -->
+                <div id="fees" class="view">
+                    <div class="view-header">
+                        <h3>Fee Management</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Total Due</th>
+                                    <th>Paid</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fees-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Maintenance View -->
+                <div id="maintenance" class="view">
+                    <div class="view-header">
+                        <h3>Maintenance Requests</h3>
+                        <button class="btn primary-btn" id="btn-add-issue"><i class="fa-solid fa-plus"></i> Report Issue</button>
+                    </div>
+                    <div class="issues-list" id="issues-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    
+    <!-- Add Student Modal -->
+    <div class="modal" id="modal-add-student">
+        <div class="modal-header">
+            <h3>Add New Student</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-student">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="student-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" id="student-contact" required>
+                </div>
+                <div class="form-group">
+                    <label>Initial Fee Due ($)</label>
+                    <input type="number" id="student-fee" value="1000" required>
+                </div>
+                <button type="submit" class="btn primary-btn full-width">Save Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div class="modal" id="modal-add-room">
+        <div class="modal-header">
+            <h3>Add New Room</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-room">
+                <div class="form-group">
+                    <label>Room Number</label>
+                    <input type="text" id="room-number" required>
+                </div>
+                <div class="form-group">
+                    <label>Capacity</label>
+                    <input type="number" id="room-capacity" min="1" max="6" value="2" required>
+                </div>
+                <button type="submit" class="btn primary-btn full-width">Save Room</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Allocate Room Modal -->
+    <div class="modal" id="modal-allocate-room">
+        <div class="modal-header">
+            <h3>Allocate Room</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-allocate-room">
+                <input type="hidden" id="allocate-student-id">
+                <div class="form-group">
+                    <label>Select Room</label>
+                    <select id="allocate-room-select" required>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <button type="submit" class="btn primary-btn full-width">Allocate</button>
+            </form>
+        </div>
+    </div>
+
+     <!-- Add Issue Modal -->
+     <div class="modal" id="modal-add-issue">
+        <div class="modal-header">
+            <h3>Report Issue</h3>
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-issue">
+                <div class="form-group">
+                    <label>Room Number</label>
+                    <select id="issue-room-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="issue-desc" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn primary-btn full-width">Submit Issue</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
